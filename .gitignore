@@ -1,2 +1,4 @@
-/target
-.aider*
+/target/
+
+/.beads/
+/.ralph-tui/
