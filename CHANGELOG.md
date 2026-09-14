@@ -10,6 +10,15 @@ All notable changes to this project will be documented in this file.
 
 - *Breaking* - Replace `triggers` with `lock_regex` and `ignore_regex`
 - *Breaking* - Require Zellij >= 0.45
+- Detect commands with Zellij's pane queries and `CommandChanged` event instead of polling `list_clients` (thanks to @LittleBear1025-xzh, whose #21 showed the way)
+- Apply changes to the plugin's config block without restarting Zellij
+
+### :fist: Fixes
+
+- Fix command detection, which broke with Zellij 0.44 (#18)
+- Keep executable paths containing spaces intact, including Windows paths (#19)
+- Keep a mode set by hand while the running command is unchanged (#20)
+- Log an invalid `reaction_seconds` instead of crashing the plugin
 
 ### Upgrading from 0.2
 
@@ -38,8 +47,12 @@ Other changes worth knowing:
 
 - Requires Zellij >= 0.45 (0.2 required >= 0.41). On older Zellij, stay on 0.2.2.
 - Surrounding parentheses are stripped from the executable name, so fish's `(atuin)` is seen as `atuin`.
-- The plugin remembers the last command it saw in each pane and only re-evaluates when it changes.
-- Log lines renamed: `Trigger commands:` is now `Lock Commands:` and `Ignore Commands:`.
+- The executable name is the last part of the path after `/` or `\`, so `C:\Program Files\Neovim\bin\nvim.exe` is `nvim.exe`.
+- The plugin remembers the last command it saw in the focused pane and re-evaluates only when that command, or the focused pane, changes. A mode you set by hand sticks until then.
+- A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`) instead of no command. With `lock_regex ".*"`, list your shells in `ignore_regex`, as the README example does.
+- A focused plugin pane is matched by where it was loaded from, e.g. `zellij:session-manager`.
+- `reaction_seconds` is the delay before the focused pane is checked again after input. Zellij also reports a changed command on its own, within about a second.
+- Log lines renamed: `Trigger commands:` is now `Lock Commands:` and `Ignore Commands:`. New lines: `Focused pane:` and `Command changed in`.
 
 ## 0.2.2 - 2024-12-13
 
