@@ -87,9 +87,6 @@ plugins {
         // A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`),
         // so list your shells here when `lock_regex` matches everything.
         ignore_regex "^(zellij|sh|zsh|bash|fish|pwsh|ls|eza|starship|direnv|\\(atuin\\)|atuin history start.*)$"
-        // Check the focused pane again this many seconds after input. (default: "0.3")
-        // Zellij also reports a changed command on its own, within about a second.
-        reaction_seconds "0.3"
         // Print observed commands to the Zellij log for debugging? (default: false)
         print_to_log false
     }
@@ -114,7 +111,7 @@ What the regexes are tested against:
 - **A focused plugin pane reports where it was loaded from**, such as `zellij:session-manager`. The example `ignore_regex` does not match that, so the catch-all setup locks plugin panes too. Add `zellij:.*` to `ignore_regex` to keep them unlocked.
 - **The executable is the last part of the path**, after `/` or `\`, so `C:\Program Files\Neovim\bin\nvim.exe` is `nvim.exe`.
 
-If a regex fails to compile it never matches, and the error is written to the Zellij log when `print_to_log` is on. An invalid `reaction_seconds` is logged the same way, and the default is kept.
+If a regex fails to compile it never matches, and the error is written to the Zellij log when `print_to_log` is on.
 
 Changes to this block take effect when Zellij reloads its config, without restarting the session.
 
@@ -152,7 +149,7 @@ keybinds clear-defaults=true {
             // Passthru `Enter`.
             WriteChars "\r";
             // Ask autolock to check the pane right away, rather than
-            // `reaction_seconds` after the key press.
+            // a moment after the key press.
             MessagePlugin "autolock" {};
         }
         //...
@@ -196,7 +193,7 @@ keybinds clear-defaults=true {
 }
 ```
 
-The `Enter` binding is optional but recommended. Without it, a program you launch is noticed about `reaction_seconds` after you press `Enter`; with it, Zellij usually locks almost at once.
+The `Enter` binding is optional but recommended. Without it, a program you launch is noticed about 0.3 seconds after you press `Enter`; with it, Zellij usually locks almost at once.
 
 ## Keybinding comparison
 

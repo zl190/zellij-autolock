@@ -18,7 +18,6 @@ All notable changes to this project will be documented in this file.
 - Fix command detection, which broke with Zellij 0.44 (#18)
 - Keep executable paths containing spaces intact, including Windows paths (#19)
 - Keep a mode set by hand while the running command is unchanged (#20)
-- Log an invalid `reaction_seconds` instead of crashing the plugin
 
 ### Upgrading from 0.2
 
@@ -51,7 +50,7 @@ Other changes worth knowing:
 - The plugin remembers the last command it saw in the focused pane and re-evaluates only when that command, or the focused pane, changes. A mode you set by hand sticks until then.
 - A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`) instead of no command. With `lock_regex ".*"`, list your shells in `ignore_regex`, as the README example does.
 - A focused plugin pane is matched by where it was loaded from, e.g. `zellij:session-manager`.
-- `reaction_seconds` is the delay before the focused pane is checked again after input. Zellij also reports a changed command on its own, within about a second.
+- `reaction_seconds` was removed. The delay before the focused pane is checked again is fixed at 0.3 seconds, and the key is ignored if still set. Zellij also reports a changed command on its own, within about a second.
 - Log lines renamed: `Trigger commands:` is now `Lock Commands:` and `Ignore Commands:`. New lines: `Focused pane:` and `Command changed in`.
 
 ## 0.2.2 - 2024-12-13
