@@ -73,20 +73,37 @@ Add `--tag 0.3.0` (or any release tag) to pin a version.
 
 Define the plugin in the `plugins` section of your Zellij config and load it at startup. Replace the `location` with the path from step 1 if it differs.
 
+A minimal configuration, which uses the defaults for every option:
+
+```kdl
+plugins {
+    autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm"
+    // ...
+}
+
+load_plugins {
+    autolock
+    // ...
+}
+```
+
+A full configuration, with every option set to its default:
+
 ```kdl
 plugins {
     autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
         // Start enabled? (default: true)
         is_enabled true
-        // Lock when the running command matches this regex. (default: "^(vim|nvim)")
+        // Lock when the running command matches this regex.
+        // (default: ".*", as shown: lock for everything)
         // Each regex is tested against both the full command line and the
         // bare executable name (e.g. `/usr/bin/nvim foo.txt` and `nvim`).
         lock_regex ".*"
         // ...but never lock when the command matches this regex.
-        // (default: "^(zellij|atuin history start.*)$")
+        // (default: common shells and prompt tooling, as shown)
         // A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`),
-        // so list your shells here when `lock_regex` matches everything.
-        ignore_regex "^(zellij|sh|zsh|bash|fish|pwsh|ls|eza|starship|direnv|\\(atuin\\)|atuin history start.*)$"
+        // so shells must be listed here.
+        ignore_regex "^(zellij|sh|ash|dash|bash|zsh|fish|ksh|mksh|csh|tcsh|nu|xonsh|elvish|pwsh|powershell|cmd|ls|lsd|eza|starship|direnv|\\(atuin\\)|atuin history start.*)(\\.exe)?$"
         // Print observed commands to the Zellij log for debugging? (default: false)
         print_to_log false
     }
@@ -99,16 +116,18 @@ load_plugins {
 }
 ```
 
+The defaults for `lock_regex` and `ignore_regex` only apply together. Setting either of them, or the deprecated `triggers`, drops both defaults, so set every rule you want: `lock_regex ".*"` alone also locks idle shells, and `ignore_regex` alone never locks anything. To add to the default shell list, copy both lines from the full configuration and edit `ignore_regex`.
+
 Two ways to think about `lock_regex`:
 
+- **Lock everything except the shell (the default):** `lock_regex ".*"` plus an `ignore_regex` listing shells and prompt tooling, as in the full configuration above. Any interactive program gets the keyboard without you having to enumerate them.
 - **Allowlist:** `lock_regex "^(vim|nvim|hx|fzf)$"` locks only for programs you name. This is the 0.2 behavior.
-- **Lock everything except the shell (recommended):** `lock_regex ".*"` plus an `ignore_regex` listing your shells and prompt tooling, as in the example above. Any interactive program gets the keyboard without you having to enumerate them.
 
 What the regexes are tested against:
 
 - **The foreground program of the focused pane**, with its arguments. Wrappers count as the program: `sudo vim /etc/hosts` has the executable `sudo`, so match the full command line or use the catch-all setup.
-- **An idle pane reports its shell**, such as `/bin/zsh`, not "no command". With a catch-all `lock_regex`, name your shells in `ignore_regex`.
-- **A focused plugin pane reports where it was loaded from**, such as `zellij:session-manager`. The example `ignore_regex` does not match that, so the catch-all setup locks plugin panes too. Add `zellij:.*` to `ignore_regex` to keep them unlocked.
+- **An idle pane reports its shell**, such as `/bin/zsh`, not "no command". The default `ignore_regex` covers common shells; if yours is missing, add it to that pattern (and keep `lock_regex`).
+- **A focused plugin pane reports where it was loaded from**, such as `zellij:session-manager`. The default `ignore_regex` does not match that, so plugin panes lock too. Add `zellij:.*` to `ignore_regex` to keep them unlocked.
 - **The executable is the last part of the path**, after `/` or `\`, so `C:\Program Files\Neovim\bin\nvim.exe` is `nvim.exe`.
 
 If a regex fails to compile it never matches, and the error is written to the Zellij log when `print_to_log` is on.

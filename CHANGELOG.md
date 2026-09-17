@@ -30,7 +30,7 @@ As my list of exceptions continued to grow, I realized it would be better to ent
 Introducing `lock_regex` and `ignore_regex` in favor of merely `triggers` allows for a more flexible configuration.
 
 - **0.2 was an allowlist.** Zellij stayed in Normal mode unless a specific, named process (`vim`, `fzf`, ...) was launched. Every program that should own the keyboard had to be enumerated in `triggers`.
-- **0.3 prefers to lock.** The recommended setup is `lock_regex ".*"`, which locks for *every* process launched inside Zellij, combined with an `ignore_regex` that names the few things that should stay unlocked: your shells and prompt tooling. Any interactive program gets the keyboard without being listed.
+- **0.3 prefers to lock.** The default is `lock_regex ".*"`, which locks for *every* process launched inside Zellij, combined with an `ignore_regex` that names the few things that should stay unlocked: your shells and prompt tooling. Any interactive program gets the keyboard without being listed.
 
 The old behavior is still available by using `lock_regex` alone as an allowlist, and the two regexes can be combined in any way you like. `ignore_regex` always wins.
 
@@ -48,7 +48,8 @@ Other changes worth knowing:
 - Surrounding parentheses are stripped from the executable name, so fish's `(atuin)` is seen as `atuin`.
 - The executable name is the last part of the path after `/` or `\`, so `C:\Program Files\Neovim\bin\nvim.exe` is `nvim.exe`.
 - The plugin remembers the last command it saw in the focused pane and re-evaluates only when that command, or the focused pane, changes. A mode you set by hand sticks until then.
-- A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`) instead of no command. With `lock_regex ".*"`, list your shells in `ignore_regex`, as the README example does.
+- With none of `lock_regex`, `ignore_regex`, or `triggers` set, the default changed from locking only `vim` and `nvim` to locking everything except common shells and prompt tooling. Setting any of the three drops both default rules, so a config that sets only `triggers` keeps its allowlist.
+- A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`) instead of no command, so shells have to be in `ignore_regex`. The default lists common ones. To extend it, copy both `lock_regex` and `ignore_regex` from the README's full configuration.
 - A focused plugin pane is matched by where it was loaded from, e.g. `zellij:session-manager`.
 - The `Enter` keybinding that 0.2 recommended (`WriteChars` plus an empty `MessagePlugin "autolock" {}`) is no longer needed. Zellij locks about 0.3 seconds after `Enter` with or without it, so you can remove it from your config.
 - `reaction_seconds` was removed. The delay before the focused pane is checked again is fixed at 0.3 seconds, and the key is ignored if still set. Zellij also reports a changed command on its own, within about a second.
