@@ -142,18 +142,6 @@ The essentials, from a working config:
 
 ```kdl
 keybinds clear-defaults=true {
-    // Keybindings specific to 'Normal' mode.
-    normal {
-        // Intercept `Enter`.
-        bind "Enter" {
-            // Passthru `Enter`.
-            WriteChars "\r";
-            // Ask autolock to check the pane right away, rather than
-            // a moment after the key press.
-            MessagePlugin "autolock" {};
-        }
-        //...
-    }
     // Keybindings specific to 'Locked' mode.
     locked {
         bind "Alt ." {
@@ -192,8 +180,6 @@ keybinds clear-defaults=true {
     //...
 }
 ```
-
-The `Enter` binding is optional but recommended. Without it, a program you launch is noticed about 0.3 seconds after you press `Enter`; with it, Zellij usually locks almost at once.
 
 ## Keybinding comparison
 
