@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 - *Breaking* - Replace `triggers` with `lock_regex` and `ignore_regex`
 - *Breaking* - Require Zellij >= 0.45
+- *Breaking* - Replace `print_to_log` with `log_level` (`print_to_log true` still works as `debug` until removed after 0.3.0)
 - Detect commands with Zellij's pane queries and `CommandChanged` event instead of polling `list_clients` (thanks to @LittleBear1025-xzh, whose #21 showed the way)
 - Apply changes to the plugin's config block without restarting Zellij
 
@@ -53,7 +54,7 @@ Other changes worth knowing:
 - A focused plugin pane is matched by where it was loaded from, e.g. `zellij:session-manager`.
 - The `Enter` keybinding that 0.2 recommended (`WriteChars` plus an empty `MessagePlugin "autolock" {}`) is no longer needed. Zellij locks about 0.3 seconds after `Enter` with or without it, so you can remove it from your config.
 - `reaction_seconds` was removed. The delay before the focused pane is checked again is fixed at 0.3 seconds, and the key is ignored if still set. Zellij also reports a changed command on its own, within about a second.
-- Log lines renamed: `Trigger commands:` is now `Lock Commands:` and `Ignore Commands:`. New lines: `Focused pane:` and `Command changed in`.
+- Log lines renamed: `Trigger commands:` is now `Lock Commands:` and `Ignore Commands:`. New lines: `Focused pane:` and `Command changed in`. Each line is now tagged with its level, e.g. `[autolock] [INFO] ...`. Logging is on by default at `info` (config loads, enable flips, mode switches, and errors), where 0.2 logged nothing unless `print_to_log` was set. Set `log_level "debug"` (what `print_to_log true` now means) to see observed commands.
 
 ## 0.2.2 - 2024-12-13
 

@@ -104,8 +104,8 @@ plugins {
         // A pane idle at its prompt reports the shell itself (e.g. `/bin/zsh`),
         // so shells must be listed here.
         ignore_regex "^(zellij|sh|ash|dash|bash|zsh|fish|ksh|mksh|csh|tcsh|nu|xonsh|elvish|pwsh|powershell|cmd|ls|lsd|eza|starship|direnv|\\(atuin\\)|atuin history start.*)(\\.exe)?$"
-        // Print observed commands to the Zellij log for debugging? (default: false)
-        print_to_log false
+        // Zellij log verbosity: trace, debug, info, warn, error, or critical. (default: "info")
+        log_level "info"
     }
     // ...
 }
@@ -130,13 +130,13 @@ What the regexes are tested against:
 - **A focused plugin pane reports where it was loaded from**, such as `zellij:session-manager`. The default `ignore_regex` does not match that, so plugin panes lock too. Add `zellij:.*` to `ignore_regex` to keep them unlocked.
 - **The executable is the last part of the path**, after `/` or `\`, so `C:\Program Files\Neovim\bin\nvim.exe` is `nvim.exe`.
 
-If a regex fails to compile it never matches, and the error is written to the Zellij log when `print_to_log` is on.
+If a regex fails to compile it never matches, and the error is written to the Zellij log at `error` level, which is on by default.
 
 Changes to this block take effect when Zellij reloads its config, without restarting the session.
 
 ## Upgrading from 0.2
 
-0.3 replaces the `triggers` option with `lock_regex` and `ignore_regex`, and requires Zellij >= 0.45. `triggers` still works but is deprecated. See the [CHANGELOG](CHANGELOG.md#030---unreleased) for the migration table and the full list of changes.
+0.3 replaces the `triggers` option with `lock_regex` and `ignore_regex`, and requires Zellij >= 0.45. `triggers` still works but is deprecated. `print_to_log` is likewise deprecated in favor of `log_level`: `print_to_log true` maps to `log_level "debug"`. Both will be removed after 0.3.0. See the [CHANGELOG](CHANGELOG.md#030---unreleased) for the migration table and the full list of changes.
 
 ## A different approach to keybindings
 
