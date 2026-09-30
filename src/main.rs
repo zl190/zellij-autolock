@@ -103,8 +103,12 @@ impl ZellijPlugin for State {
                 }
             }
 
-            Event::CommandChanged(_pane_id, command, is_foreground, _focused_client_ids) => {
-                if self.is_enabled && is_foreground {
+            Event::CommandChanged(_pane_id, command, is_foreground, focused_client_ids) => {
+                // Only the focused pane decides the mode; a background pane's command
+                // finishing must not unlock (or lock) the pane you are typing in.
+                // is_foreground=false is how zellij reports "back at the shell prompt"
+                // (command = the shell), so it must not be filtered out or we never unlock.
+                if self.is_enabled && !focused_client_ids.is_empty() {
                     if self.print_to_log {
                         eprintln!(
                             "[autolock] CommandChanged: {:?}, is_foreground: {}",
